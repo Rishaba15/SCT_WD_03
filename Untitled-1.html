@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tic-Tac-Toe Web App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e2f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      padding-top: 40px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+
+    .cell {
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .cell:hover {
+      background: #444;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+
+    .reset-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .reset-btn:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎮 Tic-Tac-Toe</h1>
+  <div class="board" id="board"></div>
+  <div class="status" id="status">Player X's turn</div>
+  <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+
+  <script>
+    const boardElement = document.getElementById("board");
+    const statusElement = document.getElementById("status");
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameActive = true;
+
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    function handleClick(index) {
+      if (!gameActive || board[index]) return;
+
+      board[index] = currentPlayer;
+      renderBoard();
+
+      if (checkWin()) {
+        statusElement.textContent = `Player ${currentPlayer} wins! 🎉`;
+        gameActive = false;
+      } else if (board.every(cell => cell)) {
+        statusElement.textContent = "It's a draw! 🤝";
+        gameActive = false;
+      } else {
+        currentPlayer = currentPlayer === "X" ? "Y" : "X";
+        statusElement.textContent = `Player ${currentPlayer}'s turn`;
+      }
+    }
+
+    function checkWin() {
+      return winningCombinations.some(comb => {
+        return comb.every(index => board[index] === currentPlayer);
+      });
+    }
+
+    function renderBoard() {
+      boardElement.innerHTML = "";
+      board.forEach((cell, index) => {
+        const div = document.createElement("div");
+        div.classList.add("cell");
+        div.textContent = cell;
+        div.addEventListener("click", () => handleClick(index));
+        boardElement.appendChild(div);
+      });
+    }
+
+    function resetGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      gameActive = true;
+      statusElement.textContent = "Player X's turn";
+      renderBoard();
+    }
+
+    renderBoard();
+  </script>
+
+</body>
+</html>
